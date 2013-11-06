@@ -1,7 +1,9 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 //import java.util.Scanner;
 //import java.util.Set;
@@ -9,21 +11,25 @@ import java.util.HashMap;
 public class WordNet {
 
 	private Digraph g;
-	
+	private  HashMap<String, Integer> HM;
+	private LinkedList<String> N;
 	// constructor takes the name of the two input files
 	public WordNet(String synsets, String hypernyms) throws IOException{
-	//	File s= new File("synnet");
-	//	File h= new File("hypernyms");
 		FileReader fr = new FileReader("synsets.txt");
         BufferedReader br = new BufferedReader(fr);
         String myreadline=null;
-        HashMap<Integer , String> HM = new HashMap<Integer , String>();  
+        HM = new HashMap<String, Integer>(); 
+        N=new LinkedList<String>();
         int v=0; //vertices number
         while (br.ready()) {
             myreadline = br.readLine();
             String a[] = myreadline.split(","); 
             int a0=Integer.parseInt(a[0]);
-            HM.put(a0, a[1]);
+            
+            for (String noun : a[1].split(" ")) {                
+            	N.add(noun);                       
+                HM.put(noun, a0);
+            }
             v++;
         }
         
@@ -49,16 +55,22 @@ public class WordNet {
            
             }
           
-       
         
         }
         
         br1.close();
         fr.close(); 
- 
-        System.out.println(g.V());
-        System.out.println(g.E());
         
+        
+        					
+        for(Integer a :g.adj(58)){
+        	System.out.println(a);
+        	System.out.println(HM.containsValue(a));
+        }
+ 
+        //System.out.println(g.V());
+        //System.out.println(g.E());
+       // System.out.println(a);
         //test node number
         //System.out.print(v);
         //test HM
@@ -72,18 +84,25 @@ public class WordNet {
 
 	// the set of nouns (no duplicates), returned as an Iterable
 	public Iterable<String> nouns(){
-		return null;
+		return N;
 		
 	}
 	
 	// is the word a WordNet noun?
 	public boolean isNoun(String word){
-		return false;
+		
+		return N.contains(word);
 		
 	}
 	
 	// distance between nounA and nounB (defined below)
 	public int distance(String nounA, String nounB){
+		
+		int a=HM.get(nounA);
+		int b=HM.get(nounB);
+		
+		//TODO distance between two node;
+		
 		return 0;
 		
 	}
@@ -100,7 +119,7 @@ public class WordNet {
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 		
-		WordNet wn=new WordNet("synsets.txt","h.txt");
+		 WordNet wn=new WordNet("synsets.txt","h.txt");
 		
 		
 		
