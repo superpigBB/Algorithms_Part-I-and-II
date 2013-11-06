@@ -11,16 +11,19 @@ import java.util.LinkedList;
 public class WordNet {
 
 	private Digraph g;
+	private SAP s=new SAP(g);
 	private  HashMap<String, Integer> HM;
 	private LinkedList<String> N;
+	
 	// constructor takes the name of the two input files
 	public WordNet(String synsets, String hypernyms) throws IOException{
-		FileReader fr = new FileReader("synsets.txt");
+		FileReader fr = new FileReader("synsets");
         BufferedReader br = new BufferedReader(fr);
         String myreadline=null;
         HM = new HashMap<String, Integer>(); 
         N=new LinkedList<String>();
         int v=0; //vertices number
+       
         while (br.ready()) {
             myreadline = br.readLine();
             String a[] = myreadline.split(","); 
@@ -38,7 +41,7 @@ public class WordNet {
 		
         g=new Digraph(v);
         
-        fr = new FileReader("hypernyms.txt");
+        fr = new FileReader("hypernyms");
         BufferedReader br1 = new BufferedReader(fr);
         while (br1.ready()) {
             myreadline = br1.readLine();
@@ -50,7 +53,7 @@ public class WordNet {
             a_num[k]=Integer.parseInt(a[k]);                   
             }
             //System.out.print(i);
-            for(int j=1;j<a.length;j++){
+            for(int j=0;j<a.length;j++){
             g.addEdge(a_num[0], a_num[j]);
            
             }
@@ -68,6 +71,7 @@ public class WordNet {
         	System.out.println(HM.containsValue(a));
         }
  
+        ///test  information
         //System.out.println(g.V());
         //System.out.println(g.E());
        // System.out.println(a);
@@ -84,6 +88,7 @@ public class WordNet {
 
 	// the set of nouns (no duplicates), returned as an Iterable
 	public Iterable<String> nouns(){
+		
 		return N;
 		
 	}
@@ -101,15 +106,22 @@ public class WordNet {
 		int a=HM.get(nounA);
 		int b=HM.get(nounB);
 		
-		//TODO distance between two node;
+		// distance between two node;
 		
-		return 0;
+		int dis=s.length(a, b);
+		return dis;
 		
 	}
 	
 	// a synset (second field of synsets.txt) that is the common ancestor of nounA and nounB
 	// in a shortest ancestral path (defined below)
 	public String sap(String nounA, String nounB){
+		int a=HM.get(nounA);
+		int b=HM.get(nounB);
+		int ancestor=s.ancestor(a, b);
+		
+		//convert int to nouns
+		
 		return null;
 		
 	}
@@ -117,12 +129,9 @@ public class WordNet {
 	
 	
 	public static void main(String[] args) throws IOException {
-		// TODO Auto-generated method stub
 		
-		 WordNet wn=new WordNet("synsets.txt","h.txt");
-		
-		
-		
+		 //WordNet wn=new WordNet("synsets.txt","hypernyms.txt");
+		 
          //g=new Digraph(50);
          //System.out.println(g.E());
          //g.addEdge(2, 3);
