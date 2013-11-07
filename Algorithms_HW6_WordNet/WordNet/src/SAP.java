@@ -9,8 +9,8 @@ public class SAP {
 
     // length of shortest ancestral path between v and w; -1 if no such path
     public int length(int v, int w){
-    	 if (!(0 <= v && v < g.V() && 0 <= w && w < g.V()))            
-    		 throw new IndexOutOfBoundsException();
+	     if (!(0 <= v && v < g.V() && 0 <= w && w < g.V()))  
+    		throw new IndexOutOfBoundsException();
     	
     	BreadthFirstDirectedPaths bfsv=new BreadthFirstDirectedPaths(g, v);
     	BreadthFirstDirectedPaths bfsw=new BreadthFirstDirectedPaths(g, w);

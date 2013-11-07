@@ -45,6 +45,9 @@ public class Outcast {
 	    for (int t = 2; t < args.length; t++) {
 	        @SuppressWarnings("deprecation")
 			String[] nouns = In.readStrings(args[t]);
+	        
+	       // for(int i=0;i<5;i++)
+	        //StdOut.println(nouns[i]);
 	        StdOut.println(args[t] + ": " + outcast.outcast(nouns));
 	    }
 	}

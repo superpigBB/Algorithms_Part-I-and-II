@@ -11,13 +11,13 @@ import java.util.LinkedList;
 public class WordNet {
 
 	private Digraph g;
-	private SAP s=new SAP(g);
+	private SAP s;
 	private  HashMap<String, Integer> HM;
 	private LinkedList<String> N;
 	
 	// constructor takes the name of the two input files
 	public WordNet(String synsets, String hypernyms) throws IOException{
-		FileReader fr = new FileReader("synsets");
+		FileReader fr = new FileReader(synsets);
         BufferedReader br = new BufferedReader(fr);
         String myreadline=null;
         HM = new HashMap<String, Integer>(); 
@@ -41,7 +41,7 @@ public class WordNet {
 		
         g=new Digraph(v);
         
-        fr = new FileReader("hypernyms");
+        fr = new FileReader(hypernyms);
         BufferedReader br1 = new BufferedReader(fr);
         while (br1.ready()) {
             myreadline = br1.readLine();
@@ -64,14 +64,15 @@ public class WordNet {
         br1.close();
         fr.close(); 
         
+        s=new SAP(this.g);
         
-        					
-        for(Integer a :g.adj(58)){
-        	System.out.println(a);
-        	System.out.println(HM.containsValue(a));
-        }
+      ///test  information				
+        //for(Integer a :g.adj(58)){
+        //	System.out.println(a);
+        //	System.out.println(HM.containsValue(a));
+       // }
  
-        ///test  information
+        
         //System.out.println(g.V());
         //System.out.println(g.E());
        // System.out.println(a);
@@ -103,7 +104,7 @@ public class WordNet {
 	// distance between nounA and nounB (defined below)
 	public int distance(String nounA, String nounB){
 		
-		if (!isNoun(nounA) || !isNoun(nounB))            
+		if (!isNoun(nounA) || !isNoun(nounB))      
 			throw new IllegalArgumentException();
 		
 		int a=HM.get(nounA);
