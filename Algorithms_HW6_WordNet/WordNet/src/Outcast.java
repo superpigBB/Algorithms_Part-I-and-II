@@ -18,13 +18,14 @@ public class Outcast {
 			for(int j=0;j<nouns.length;j++){
 				if(i!=j){
 					dist =dist + wn.distance(nouns[i], nouns[j]);
+					
 				}
 			}
 			
-			if(dist>dismax)
+			if(dist>dismax){
 				dismax=dist;
 				index=i;
-			
+			}
 		}
 		
 		if(index==-1)
@@ -46,8 +47,6 @@ public class Outcast {
 	        @SuppressWarnings("deprecation")
 			String[] nouns = In.readStrings(args[t]);
 	        
-	       // for(int i=0;i<5;i++)
-	        //StdOut.println(nouns[i]);
 	        StdOut.println(args[t] + ": " + outcast.outcast(nouns));
 	    }
 	}

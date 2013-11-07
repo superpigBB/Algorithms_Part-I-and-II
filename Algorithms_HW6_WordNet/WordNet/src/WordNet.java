@@ -1,7 +1,6 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -97,13 +96,12 @@ public class WordNet {
 	// is the word a WordNet noun?
 	public boolean isNoun(String word){
 		
-		return N.contains(word);
+		return HM.containsKey(word);
 		
 	}
 	
 	// distance between nounA and nounB (defined below)
 	public int distance(String nounA, String nounB){
-		
 		if (!isNoun(nounA) || !isNoun(nounB))      
 			throw new IllegalArgumentException();
 		
@@ -129,6 +127,8 @@ public class WordNet {
 		int ancestor=s.ancestor(a, b);
 		
 		//convert int to nouns
+		//TODO
+		
 		
 		return null;
 		

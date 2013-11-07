@@ -3,8 +3,9 @@ public class SAP {
     private Digraph g;
     
     // constructor takes a digraph (not necessarily a DAG)
-    public SAP(Digraph G){
-    	this.g=G;
+    public SAP( Digraph G){
+    	
+    	this.g=new Digraph(G);
     }
 
     // length of shortest ancestral path between v and w; -1 if no such path
@@ -19,32 +20,21 @@ public class SAP {
     	int ancestor=-1;
         int len=-1;
         
-        //if w and v connected;
-        if (bfsv.hasPathTo(w)){
-    	   len=bfsv.distTo(w);
-    	   return len;
-        }
         
-        if (bfsw.hasPathTo(v)){
-    	   len=bfsw.distTo(v);
-    	   return len;
-        }
-    	
         for(int a=0; a<g.V();a++){
-        	if(bfsv.hasPathTo(a)&&bfsw.hasPathTo(a)){
-        		if(temp>bfsv.distTo(a)+bfsw.distTo(a))
-        			ancestor=a;
-        			temp=bfsv.distTo(a)+bfsw.distTo(a);
-        	}
-        	
+        	  if(bfsv.hasPathTo(a)&&bfsw.hasPathTo(a)){
+        		  if(temp>bfsv.distTo(a)+bfsw.distTo(a)){
+        			  ancestor=a;
+        			  temp=bfsv.distTo(a)+bfsw.distTo(a);
+        		  }
+        	  }
         }
     
-       if(ancestor!=-1)
-    	   len= temp;
-       else 
-    	   len=-1;
-       
-       return len;
+     if(ancestor!=-1)
+    	 return temp;
+     else
+    	 return -1;
+
     }
 
     // a common ancestor of v and w that participates in a shortest ancestral path; -1 if no such path
@@ -57,39 +47,40 @@ public class SAP {
     	
     	int temp=Integer.MAX_VALUE;
     	int ancestor=-1;
-        
+    
+        int len=-1;
+
         
         //if w and v connected;
-        if (bfsv.hasPathTo(w)){
-    	   return w;
-        }
+    	
         
-        if (bfsw.hasPathTo(v)){
-    	   return v;
-        }
     	
         for(int a=0; a<g.V();a++){
         	if(bfsv.hasPathTo(a)&&bfsw.hasPathTo(a)){
-        		if(temp>bfsv.distTo(a)+bfsw.distTo(a))
+        		if(temp>bfsv.distTo(a)+bfsw.distTo(a)){
         			ancestor=a;
         			temp=bfsv.distTo(a)+bfsw.distTo(a);
+        		}
         	}
         	
         }
+        
+       	 return ancestor;
     
-       if(ancestor==-1)
-    	   return -1;
-       else 
-    	   return ancestor;
 
     }
 
     // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
     public int length(Iterable<Integer> v, Iterable<Integer> w){
+    	
     	int min = Integer.MAX_VALUE;        
     
     	for (Integer iw : w) {            
-    		for (Integer iv : v) {                
+    		for (Integer iv : v) {     
+    			
+    			if (!(0 <= iv && iv < g.V() && 0 <= iw && iw < g.V()))            
+    	      		 throw new IndexOutOfBoundsException();
+    			
     			int len = length(iv, iw);                
     			if (len < min)                    
     				min = len;            
@@ -103,8 +94,16 @@ public class SAP {
     // a common ancestor that participates in shortest ancestral path; -1 if no such path
     public int ancestor(Iterable<Integer> v, Iterable<Integer> w){
      	int ancestor = Integer.MAX_VALUE;        
-        
-    	
+        //TODO
+     	for (Integer iw : w) {            
+    		for (Integer iv : v) {
+     	if (!(0 <= iv && iv < g.V() && 0 <= iw && iw < g.V()))            
+     		 throw new IndexOutOfBoundsException();
+     	
+     	
+    		}
+    	}
+     	
     	return -1;
     }
 
@@ -113,6 +112,10 @@ public class SAP {
     	In in =new In(args[0]);
     	Digraph G=new Digraph(in);
     	SAP sap=new SAP(G);
+    	
+    	//test whether immutable
+    	//for(int v=0;v<G.V();v++)
+    	 // G.addEdge(v, 0);
     	
     	while(!StdIn.isEmpty()){
     		
