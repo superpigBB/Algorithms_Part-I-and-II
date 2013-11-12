@@ -155,14 +155,98 @@ public class SeamCarver {
    
    
    
-   /*
+   
    public int[] findHorizontalSeam(){
 	   // sequence of indices for vertical seam
-	   int a[]=new int[5];
-	   pic.
+	  int a[]=new int[width];
+	   int b[]=new int[width];
+	     
+	   double sum=0;
+	   double min_sum=Double.MAX_VALUE;
+	   double energy[][]= new double[height][width];
+	   for(int i=0;i<width;i++){
+		   for(int j=0;j<height;j++){
+			   energy[j][i]=energy(i,j);
+		   }
+	   }
 	   
+	   //brute force
+       for(int w=0; w<height;w++){
+           sum=energy[w][0];
+           a[0]=w;
+           int y=0;
+           int x=w;
+           while(y<width-1){
+        	   if(x==0){  //boarder case
+            	 if(energy[x][y+1]<=energy[x+1][y+1]){
+            		 //x=x;
+            		 y=y+1;
+            		 a[y]=x;
+            		 sum=sum+energy[x][y];
+            		
+            	 }else{
+            		 x=x+1;
+            		 y=y+1;
+            		 a[y]=x;
+            		 sum=sum+energy[x][y];
+            		 
+            	 }
+               }else if(x==height-1){ //boarder case
+            	 if(energy[x][y+1]<=energy[x-1][y+1]){
+            		 //x=x;
+            		 y=y+1;
+            		 a[y]=x;
+            		 sum=sum+energy[x][y];
+            		 
+            	 }else{
+            		 x=x-1;
+            		 y=y+1;
+            		 a[y]=x;
+            		 sum=sum+energy[x][y];
+            	 }
+             }else{
+            	 if(energy[x][y+1]<=energy[x-1][y+1]){
+            		 if(energy[x][y+1]<=energy[x+1][y+1]){
+            			 //x=x;
+                		 y=y+1;
+                		 a[y]=x;
+                		 sum=sum+energy[x][y];
+            		 }else{
+            			 x=x+1;
+            		     y=y+1;
+            		     a[y]=x;
+            		     sum=sum+energy[x][y];
+            		 }
+            	 }else{
+            		 if(energy[x-1][y+1]<=energy[x+1][y+1]){
+            			 x=x-1;
+                		 y=y+1;
+                		 a[y]=x;
+                		 sum=sum+energy[x][y];	 
+            		 }else{
+            			 x=x+1;
+            		     y=y+1;
+            		     a[y]=x;
+            		     sum=sum+energy[x][y];
+            		     
+            		 }
+            	 } 
+             }  
+           }
+
+           if(sum<min_sum) 
+           {
+        	   min_sum=sum;
+        	   //b=new int[height]; shallow copy is wrong!!!
+        	   System.arraycopy( a, 0, b, 0, a.length );  //USE DEEP COPY!
+           }
+       }
+	   
+	   return b;
    }
    
+   
+   /*
    public void removeHorizontalSeam(int[] a){
 	   // remove horizontal seam from picture
    }
@@ -182,6 +266,7 @@ public class SeamCarver {
 	   //System.out.println(sc.energy(1,1));
 	   //sc.pic.show();
 	   sc.findVerticalSeam();
+	   sc.findHorizontalSeam();
    }
 
 }
