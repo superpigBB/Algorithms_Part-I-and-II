@@ -5,7 +5,7 @@ public class SeamCarver {
    private int width;
    private int height;
    private double energy;
-   
+  
    public SeamCarver(Picture picture){
 	   this.pic=new Picture(picture);
 	   width=pic.width();
@@ -246,15 +246,99 @@ public class SeamCarver {
    }
    
    
-   /*
+   
    public void removeHorizontalSeam(int[] a){
 	   // remove horizontal seam from picture
+	   Color[][] color_src=new Color[width][height];
+	   Color[][] color_dst=new Color[width][height-1];
+	   
+	   double energy_src[][]= new double[width][height];
+	   double energy_dst[][]= new double[width][height-1];
+	   for(int i=0;i<height;i++){
+		   for(int j=0;j<width;j++){
+			   energy_src[j][i]=energy(j,i);
+			   color_src[j][i]=pic.get(j, i);
+			   
+		   }
+	   }
+	   
+	   
+	   for(int x=0;x<width; x++){
+		   int y=0;
+		   int y1=0;
+		   while(y1<height){
+		       if(y1!=a[x]){	   
+		       energy_dst[x][y]=energy_src[x][y1];
+		       color_dst[x][y]=color_src[x][y1];
+	           y++;
+	           y1++;
+	           }else{
+	        	   //Color c=Color.RED;
+	        	   //pic.set(x, y, c);
+	        	   y1++;
+	           }
+	        
+		   }
+	   }
+	   
+	  
+      pic=new Picture(width, height-1);
+	     
+	   for (int i = 0; i <height-1 ; i++)
+           for (int j = 0; j < width; j++)
+           {
+               pic.set(j, i, color_src[j][i]);
+           }
+	   height=height-1;
+	   
    }
+   
    
    public void removeVerticalSeam(int[] a){
 	   // remove vertical seam from picture
+	   Color[][] color_src=new Color[width][height];
+	   Color[][] color_dst=new Color[width-1][height];
+	   
+	   double energy_src[][]= new double[width][height];
+	   double energy_dst[][]= new double[width-1][height];
+	   for(int i=0;i<height;i++){
+		   for(int j=0;j<width;j++){
+			   energy_src[j][i]=energy(j,i);
+			   color_src[j][i]=pic.get(j, i);
+		   }
+	   }
+	   
+	   
+	   for(int y=0;y<height; y++){
+		   int x=0;
+		   int x1=0;
+		   while(x1<width){
+		       if(x1!=a[y]){	   
+		       energy_dst[x][y]=energy_src[x1][y];
+		       color_dst[x][y]=color_src[x1][y];
+	           x++;
+	           x1++;
+	           }else{
+	        	   //Color c=Color.green;
+	        	   //pic.set(x, y, c);
+	        	   x1++;
+	           }
+	        
+		   }
+	   }
+	   //return energy_dst;
+	   
+	   pic=new Picture(width-1, height);
+	   
+	   
+	   for (int i = 0; i < height; i++)
+           for (int j = 0; j < width-1; j++)
+           {
+               pic.set(j, i,color_src[j][i]);
+           }
+	   width=width-1;
+	   
    }
-   */
    
    public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -265,8 +349,8 @@ public class SeamCarver {
 	   System.out.println(sc.width);
 	   //System.out.println(sc.energy(1,1));
 	   //sc.pic.show();
-	   sc.findVerticalSeam();
-	   sc.findHorizontalSeam();
+	   //sc.findVerticalSeam();
+	   //sc.findHorizontalSeam();
    }
 
 }

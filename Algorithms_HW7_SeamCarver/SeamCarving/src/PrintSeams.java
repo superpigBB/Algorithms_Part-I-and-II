@@ -43,6 +43,8 @@ public class PrintSeams {
         double totalSeamEnergy = 0;
 
         int[] verticalSeam = sc.findVerticalSeam();
+        //double e_dst[][]=sc.removeVerticalSeam(verticalSeam);
+        
         for (int j = 0; j < sc.height(); j++)
         {
             for (int i = 0; i < sc.width(); i++)            
@@ -63,6 +65,21 @@ public class PrintSeams {
         }                
         
         System.out.printf("\nTotal energy: %.0f\n\n", totalSeamEnergy);
+        
+        /*
+        System.out.println("e_dst");
+        
+        for (int j = 0; j < sc.height(); j++)
+        {
+            for (int i = 0; i < sc.width()-1; i++)            
+            {
+            	 System.out.printf( e_dst[i][j]+" ");
+            }
+            System.out.println();
+            
+        }*/
+        
+        
     }
 
     public static void main(String[] args)
@@ -78,6 +95,7 @@ public class PrintSeams {
         System.out.printf("Displaying vertical seam calculated.\n");
         printVerticalSeam(sc);
 
+      
 
     }
 
