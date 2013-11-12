@@ -1,14 +1,10 @@
 import java.awt.Color;
-import java.util.HashMap;
-
-//import 
 
 public class SeamCarver {
    private Picture pic;	
    private int width;
    private int height;
    private double energy;
-   private  HashMap<Double, Integer[]> HM;
    
    public SeamCarver(Picture picture){
 	   this.pic=new Picture(picture);
@@ -70,9 +66,9 @@ public class SeamCarver {
    
    public int[] findVerticalSeam(){
 	   // sequence of indices for horizontal seam
-	   Integer a[]=new Integer[height];
-	   int result[]=new int[height];
-	   HM = new HashMap<Double, Integer[]>();   
+	   int a[]=new int[height];
+	   int b[]=new int[height];
+	     
 	   double sum=0;
 	   double min_sum=Double.MAX_VALUE;
 	   double energy[][]= new double[width][height];
@@ -89,7 +85,6 @@ public class SeamCarver {
            int y=0;
            int x=w;
            while(y<height-1){
-             
         	   if(x==0){  //boarder case
             	 if(energy[x][y+1]<=energy[x+1][y+1]){
             		 //x=x;
@@ -118,30 +113,24 @@ public class SeamCarver {
             		 sum=sum+energy[x][y];
             	 }
              }else{
-            	//System.out.println("x="+x+"  y="+y);
             	 if(energy[x][y+1]<=energy[x-1][y+1]){
             		 if(energy[x][y+1]<=energy[x+1][y+1]){
             			 //x=x;
                 		 y=y+1;
                 		 a[y]=x;
                 		 sum=sum+energy[x][y];
-                		
             		 }else{
             			 x=x+1;
             		     y=y+1;
             		     a[y]=x;
             		     sum=sum+energy[x][y];
-            		     
             		 }
-            		
             	 }else{
             		 if(energy[x-1][y+1]<=energy[x+1][y+1]){
             			 x=x-1;
                 		 y=y+1;
                 		 a[y]=x;
-                		 
-                		 sum=sum+energy[x][y];
-                		 
+                		 sum=sum+energy[x][y];	 
             		 }else{
             			 x=x+1;
             		     y=y+1;
@@ -150,24 +139,18 @@ public class SeamCarver {
             		     
             		 }
             	 } 
-             }
-        	 
-              
+             }  
            }
-           
-           if(sum<min_sum) min_sum=sum;
-           HM.put(sum, a); 	   
+
+           if(sum<min_sum) 
+           {
+        	   min_sum=sum;
+        	   //b=new int[height]; shallow copy is wrong!!!
+        	   System.arraycopy( a, 0, b, 0, a.length );  //USE DEEP COPY!
+           }
        }
 	   
-	   a=HM.get(min_sum);
-	   
-	   for(int z=0; z<height-1; z++){
-		   //System.out.println(a[z]);
-		   result[z]=(int) a[z];
-	   }
-		   
-	   
-	   return result;
+	   return b;
    }
    
    
@@ -196,9 +179,9 @@ public class SeamCarver {
 	   SeamCarver sc=new  SeamCarver(inputImg);
 	   System.out.println(sc.height);
 	   System.out.println(sc.width);
-	   System.out.println(sc.energy(1,1));
+	   //System.out.println(sc.energy(1,1));
 	   //sc.pic.show();
-	   //sc.findVerticalSeam();
+	   sc.findVerticalSeam();
    }
 
 }
