@@ -5,7 +5,9 @@ public class SeamCarver {
    private int width;
    private int height;
    private double energy;
-  
+   
+   
+   
    public SeamCarver(Picture picture){
 	   this.pic=new Picture(picture);
 	   width=pic.width();
@@ -73,7 +75,7 @@ public class SeamCarver {
 	   int b[]=new int[height];
 	     
 	   double sum=0;
-	   double min_sum=Double.MAX_VALUE;
+	   double min_sum=Double.POSITIVE_INFINITY;;
 	   double energy[][]= new double[width][height];
 	   for(int i=0;i<height;i++){
 		   for(int j=0;j<width;j++){
@@ -165,7 +167,7 @@ public class SeamCarver {
 	   int b[]=new int[width];
 	     
 	   double sum=0;
-	   double min_sum=Double.MAX_VALUE;
+	   double min_sum=Double.POSITIVE_INFINITY;;
 	   double energy[][]= new double[height][width];
 	   for(int i=0;i<width;i++){
 		   for(int j=0;j<height;j++){
@@ -255,27 +257,24 @@ public class SeamCarver {
 	   if(a.length!=width) throw new IndexOutOfBoundsException();
 	   if(width<=1) throw new RuntimeException();
 	   
-	   Color[][] color_src=new Color[width][height];
-	   Color[][] color_dst=new Color[width][height-1];
 	   
-	   double energy_src[][]= new double[width][height];
-	   double energy_dst[][]= new double[width][height-1];
+	   Color[][] color_dst=new Color[width][height-1];
+	  
+       Color[][] color_src=new Color[width][height];
 	   
 	   for(int i=0;i<height;i++){
 		   for(int j=0;j<width;j++){
-			   energy_src[j][i]=energy(j,i);
+			  
 			   color_src[j][i]=pic.get(j, i);
-			   
 		   }
 	   }
-	   
 	   
 	   for(int x=0;x<width; x++){
 		   int y=0;
 		   int y1=0;
 		   while(y1<height){
 		       if(y1!=a[x]){	   
-		       energy_dst[x][y]=energy_src[x][y1];
+		       
 		       color_dst[x][y]=color_src[x][y1];
 	           y++;
 	           y1++;
@@ -294,8 +293,9 @@ public class SeamCarver {
 	   for (int i = 0; i <height-1 ; i++)
            for (int j = 0; j < width; j++)
            {
-               pic.set(j, i, color_src[j][i]);
+               pic.set(j, i, color_dst[j][i]);
            }
+
 	   
 	   height=height-1;
    }
@@ -307,26 +307,23 @@ public class SeamCarver {
 	   if(a.length!=height) throw new IndexOutOfBoundsException();
 	   if(height<=1) throw new RuntimeException();
 	   
-	   Color[][] color_src=new Color[width][height];
+	  
 	   Color[][] color_dst=new Color[width-1][height];
 	   
-	   double energy_src[][]= new double[width][height];
-	   double energy_dst[][]= new double[width-1][height];
+       Color[][] color_src=new Color[width][height];
 	   
 	   for(int i=0;i<height;i++){
 		   for(int j=0;j<width;j++){
-			   energy_src[j][i]=energy(j,i);
+			  
 			   color_src[j][i]=pic.get(j, i);
 		   }
 	   }
-	   
 	   
 	   for(int y=0;y<height; y++){
 		   int x=0;
 		   int x1=0;
 		   while(x1<width){
 		       if(x1!=a[y]){	   
-		       energy_dst[x][y]=energy_src[x1][y];
 		       color_dst[x][y]=color_src[x1][y];
 	           x++;
 	           x1++;
@@ -346,7 +343,7 @@ public class SeamCarver {
 	   for (int i = 0; i < height; i++)
            for (int j = 0; j < width-1; j++)
            {
-               pic.set(j, i,color_src[j][i]);
+               pic.set(j, i,color_dst[j][i]);
            }
 	   
 	   width=width-1;
@@ -354,7 +351,6 @@ public class SeamCarver {
    }
    
    public static void main(String[] args) {
-		// TODO Auto-generated method stub
 	   
 	   Picture inputImg = new Picture(args[0]);
 	   SeamCarver sc=new  SeamCarver(inputImg);
