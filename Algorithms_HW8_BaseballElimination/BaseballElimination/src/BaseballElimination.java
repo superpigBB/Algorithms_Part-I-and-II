@@ -19,7 +19,6 @@ public class BaseballElimination{
         BufferedReader br = new BufferedReader(fr);
         String myreadline;
         
-        
         myreadline = br.readLine();
         System.out.println(myreadline);
         number_team=Integer.parseInt(myreadline);
@@ -33,7 +32,7 @@ public class BaseballElimination{
         int v=0;        
         while (br.ready()) {
             myreadline = br.readLine();
-            String a[] = myreadline.split(" "); 
+            String a[] = myreadline.split("\\s+"); 
             team[v]=a[0];
             int wins_count=Integer.parseInt(a[1]);
             wins[v]=wins_count;
@@ -91,8 +90,17 @@ public class BaseballElimination{
     
     
     public boolean isEliminated(String team){
+    	//trivial elimination
+    	int team_index=wins(team)+remaining(team);
+    	for(String t:teams()){
+    		if(team_index<wins(t))
+    			return true;
+    	}
     	
-    	return true;
+    	
+    	
+    	
+    	return false;
     }
     
     public Iterable<String> certificateOfElimination(String team){
@@ -101,7 +109,7 @@ public class BaseballElimination{
     }
     
 	public static void main(String[] args) throws IOException {
-		// TODO Auto-generated method stub
+		
 		 BaseballElimination b=new  BaseballElimination("teams4.txt");
 		 
 		 System.out.println("number of team is :" + b.numberOfTeams());
@@ -110,6 +118,7 @@ public class BaseballElimination{
 		 System.out.println(" Philadelphia wins is :"+ b.wins("Philadelphia"));
 		 System.out.println(" Philadelphia loses is :" + b.losses("Philadelphia"));
 		 System.out.println(" Philadelphia remain is :" + b.remaining("Philadelphia"));
+		 System.out.println(" Philadelphia is out: "+ b.isEliminated("Philadelphia"));
 
 	}
 
