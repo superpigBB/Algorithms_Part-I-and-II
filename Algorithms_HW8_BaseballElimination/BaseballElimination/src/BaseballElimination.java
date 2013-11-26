@@ -7,11 +7,12 @@ import java.util.HashMap;
 
 public class BaseballElimination{
 	private int number_team;
-	private String team[];
+	private String teams[];
 	private int wins[];
 	private int losses[];
 	private int remains[];
 	private int game[][];
+	private int edgesLeavingSource;
 	private  HashMap<String, Integer> HM;
 	
 	public BaseballElimination(String filename) throws IOException{
@@ -20,9 +21,8 @@ public class BaseballElimination{
         String myreadline;
         
         myreadline = br.readLine();
-        System.out.println(myreadline);
         number_team=Integer.parseInt(myreadline);
-        team=new String[number_team];
+        teams=new String[number_team];
         wins=new int[number_team];
         losses=new int[number_team];
         remains=new int[number_team];
@@ -33,19 +33,21 @@ public class BaseballElimination{
         while (br.ready()) {
             myreadline = br.readLine();
             String a[] = myreadline.split("\\s+"); 
-            team[v]=a[0];
-            int wins_count=Integer.parseInt(a[1]);
+            int b=0;  //for handle multi-file format.
+            if(myreadline.charAt(0)==' ') b=1;  
+            teams[v]=a[0+b];
+            int wins_count=Integer.parseInt(a[1+b]);
             wins[v]=wins_count;
-            int losses_count=Integer.parseInt(a[2]);
+            int losses_count=Integer.parseInt(a[2+b]);
             losses[v]=losses_count;
-            int remain_count=Integer.parseInt(a[3]);
+            int remain_count=Integer.parseInt(a[3+b]);
             remains[v]=remain_count;
             
             for (int u = 0; u < number_team; u++)
-                game[v][u] = Integer.parseInt(a[u+4]);
+                game[v][u] = Integer.parseInt(a[u+4+b]);
             
             
-            HM.put(team[v], v);
+            HM.put(teams[v], v);
             v++;
         }
         
@@ -63,33 +65,45 @@ public class BaseballElimination{
 		ArrayList<String> a=new ArrayList<String>();
 		
 		for(int i=0;i<number_team;i++)
-		    a.add(team[i]);
+		    a.add(teams[i]);
 		
 		return a;
 	}
 	
 	public int wins(String team){
-		
+		if (!HM.containsKey(team))
+            throw new IllegalArgumentException();
+    	
 		return wins[HM.get(team)];
 	}
 	
     public int losses(String team){
+    	if (!HM.containsKey(team))
+            throw new IllegalArgumentException();
 		
 		return losses[HM.get(team)];
 	}
 	
     public int remaining(String team){
-		
+    	if (!HM.containsKey(team))
+            throw new IllegalArgumentException();
+    	
 		return remains[HM.get(team)];
 	}
 	
     public int against(String team1, String team2){
+    	if (!HM.containsKey(team1)||!HM.containsKey(team2))
+            throw new IllegalArgumentException();
+    	
 		
  		return game[HM.get(team1)][HM.get(team2)];
  	}
     
     
     public boolean isEliminated(String team){
+    	if (!HM.containsKey(team))
+            throw new IllegalArgumentException();
+    	
     	//trivial elimination
     	int team_index=wins(team)+remaining(team);
     	for(String t:teams()){
@@ -97,28 +111,89 @@ public class BaseballElimination{
     			return true;
     	}
     	
+        //non trivial -----maxflow problem 
+    	/*
+    	int s = number_team + number_team*number_team;
+        int t = number_team + number_team*number_team + 1;
+    	
+    	FlowNetwork flowNetwork = new FlowNetwork(number_team*number_team + number_team  + 2);
+
+    	*/
     	
     	
     	
-    	return false;
+    	FordFulkerson fordFulkerson = generateFordFulkersonForTeam(HM.get(team));
+        //System.out.println("************************"+fordFulkerson.value());
+        //System.out.println("========================"+edgesLeavingSource);
+        return fordFulkerson.value() < edgesLeavingSource;
+    	
+    	//return false;
+    	
     }
     
+    
+    
+    private FordFulkerson generateFordFulkersonForTeam(int currentTeamIndex) {
+        int gameVerticeCount = number_team * number_team;
+        FlowNetwork flowNetwork = new FlowNetwork(gameVerticeCount + number_team + 2);
+
+        int s = number_team + gameVerticeCount;
+        int t = number_team + gameVerticeCount + 1;
+        //System.out.println("*******"+s);
+        //System.out.println("*******"+t);
+        edgesLeavingSource = 0;
+
+        for (int firstTeamIndex = 0; firstTeamIndex < number_team - 1; firstTeamIndex++) {
+            for (int secondTeamIndex = firstTeamIndex + 1; secondTeamIndex < number_team; secondTeamIndex++) {
+                if (firstTeamIndex == currentTeamIndex || secondTeamIndex == currentTeamIndex) continue;
+                edgesLeavingSource += game[firstTeamIndex][secondTeamIndex];
+                //System.out.println("kkkkkkkkkkkkkkkkkkkkkk " +firstTeamIndex +" kkkkkkkkkkkkkkkkkkkkkk " + secondTeamIndex +" kkkkkkkkkkkkkkkkkkkkkk " + game[firstTeamIndex][secondTeamIndex]);
+                flowNetwork.addEdge(new FlowEdge(s, getGameVerticeIndexBetweenTeams(firstTeamIndex,secondTeamIndex), game[firstTeamIndex][secondTeamIndex]));
+                flowNetwork.addEdge(new FlowEdge(getGameVerticeIndexBetweenTeams(firstTeamIndex,secondTeamIndex), getTeamVerticeIndex(firstTeamIndex), Double.POSITIVE_INFINITY));
+                flowNetwork.addEdge(new FlowEdge(getGameVerticeIndexBetweenTeams(firstTeamIndex,secondTeamIndex), getTeamVerticeIndex(secondTeamIndex), Double.POSITIVE_INFINITY));
+            }
+        }
+
+        for (int teamIndex = 0; teamIndex < number_team; teamIndex++) {
+            if (teamIndex == currentTeamIndex) continue;
+            flowNetwork.addEdge(new FlowEdge(getTeamVerticeIndex(teamIndex), t, Math.max(wins[currentTeamIndex] + remains[currentTeamIndex] - wins[teamIndex], 0)));
+        }
+
+        return new FordFulkerson(flowNetwork, s, t);
+    }
+
+    private int getTeamVerticeIndex(int teamIndex) {
+        return number_team * number_team + teamIndex;
+    }
+    
+    private int getGameVerticeIndexBetweenTeams(int firstTeam, int secondTeam) {
+      if (firstTeam > secondTeam)
+          return number_team * secondTeam + firstTeam;
+      return number_team * firstTeam + secondTeam;
+    }
+    
+   
+    
+    
     public Iterable<String> certificateOfElimination(String team){
-    	
+    
     	return null;
     }
     
-	public static void main(String[] args) throws IOException {
-		
-		 BaseballElimination b=new  BaseballElimination("teams4.txt");
-		 
-		 System.out.println("number of team is :" + b.numberOfTeams());
-		 System.out.println("all team is :" +b.teams());
-		 System.out.println(" Philadelphia again NY is :"+b.against("Philadelphia", "Montreal"));
-		 System.out.println(" Philadelphia wins is :"+ b.wins("Philadelphia"));
-		 System.out.println(" Philadelphia loses is :" + b.losses("Philadelphia"));
-		 System.out.println(" Philadelphia remain is :" + b.remaining("Philadelphia"));
-		 System.out.println(" Philadelphia is out: "+ b.isEliminated("Philadelphia"));
+	public static void main(String[] args) throws IOException { 
+		 BaseballElimination division = new BaseballElimination(args[0]);
+		    for (String team : division.teams()) {
+		        if (division.isEliminated(team)) {
+		        	StdOut.println(team +" is eliminated");
+		            //StdOut.print(team + " is eliminated by the subset R = { ");
+		            //for (String t : division.certificateOfElimination(team))
+		            //    StdOut.print(t + " ");
+		            //StdOut.println("}");
+		        }
+		        else {
+		            StdOut.println(team + " is not eliminated");
+		        }
+		    }
 
 	}
 
