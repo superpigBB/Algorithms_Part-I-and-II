@@ -9,6 +9,7 @@ public class BoggleSolver
     private SET<Integer> onPath  = new SET<Integer>(); 
 	private Stack<Integer> finalpath= new Stack<Integer>();
 	private Queue<Stack<Integer>> reque= new Queue<Stack<Integer>>();
+	private Queue<Queue<String>> reque1= new Queue<Queue<String>>();
 	
     // Initializes the data structure using the given array of strings as the dictionary.
     // (You can assume each word in the dictionary contains only the uppercase letters A through Z.)
@@ -34,14 +35,20 @@ public class BoggleSolver
 
     	   // found path from s to t - currently prints in reverse order because of stack
     	   if (s.equals(d)){	
-    	     System.out.println(path);
-    	     
+    		  Stack<Integer> reverse=new Stack<Integer>();
+    		  
+    			  for(Integer temp:path)
+    			    reverse.push(temp);
+    		  
+    	       //System.out.println(reverse);
+    	       reque.enqueue(reverse);
     	     
     	    }
    	        // consider all neighbors that would continue path with repeating a node
     	    else {
     	        for (Integer w : g.adj(s)) {
     	            if (!onPath.contains(w)){ 
+    	           
     	            	
     	            	/*
     	                for(Integer temp: path ){
@@ -128,12 +135,24 @@ public class BoggleSolver
           for(int j=0;j<g.V();j++){
         	  if(j==i) continue;
         	  //TODO: find all path to J!!!!!!!!
-        	  findAllPath(g,j,i);
-              
+        	  findAllPath(g,i,j);
+        	  
+        	  while(reque.isEmpty()==false){
+                String str=new String();
+        	    for( Integer t:reque.dequeue()){
+        		  char c=hm.get(t);
+        		  str=str+c;
+        	    }
+        	    words.enqueue(str);
+        	    
+        	    
+        	  }
+        	  
+        	  
           }
-          StdOut.println();
+          //StdOut.println();
        }
-    	return null;
+    	return words;
     }
     
     // Returns the score of the given word if it is in the dictionary, zero otherwise.
@@ -171,7 +190,7 @@ public class BoggleSolver
         BoggleBoard board = new BoggleBoard(args[1]);
         
        
-        solver.getAllValidWords(board);
+        //solver.getAllValidWords(board);
         //solver.printHash();
        //for (String word : solver.getAllValidWords(board))
         	//StdOut.println(word);
@@ -179,7 +198,7 @@ public class BoggleSolver
        
        
        
-        /*
+        
        int score = 0;
        for (String word : solver.getAllValidWords(board))
         {
@@ -187,7 +206,7 @@ public class BoggleSolver
            score += solver.scoreOf(word);
         }
         StdOut.println("Score = " + score);
-         */
+        
         
         return;
     }
