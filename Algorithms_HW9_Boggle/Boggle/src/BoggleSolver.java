@@ -1,14 +1,15 @@
 import java.util.HashMap;
 
-
 public class BoggleSolver
 {
 	private TrieST<Integer> st;
 	private HashMap<Integer, Character> hm;
 	private Graph g;
-	private DepthFirstPaths dfp;
-	private Stack<Integer> path;
-	private String str;
+	private Stack<Integer> path  = new Stack<Integer>();   
+    private SET<Integer> onPath  = new SET<Integer>(); 
+	private Stack<Integer> finalpath= new Stack<Integer>();
+	private Queue<Stack<Integer>> reque= new Queue<Stack<Integer>>();
+	
     // Initializes the data structure using the given array of strings as the dictionary.
     // (You can assume each word in the dictionary contains only the uppercase letters A through Z.)
     public BoggleSolver(String[] dictionary){
@@ -24,6 +25,40 @@ public class BoggleSolver
         //  StdOut.println(key + " " + st.get(key));
         //}
     }
+    
+     
+    private void findAllPath(Graph g, Integer s, Integer d){
+    	   // add node v to current path from s
+    	   path.push(s);
+    	   onPath.add(s);
+
+    	   // found path from s to t - currently prints in reverse order because of stack
+    	   if (s.equals(d)){	
+    	     System.out.println(path);
+    	     
+    	     
+    	    }
+   	        // consider all neighbors that would continue path with repeating a node
+    	    else {
+    	        for (Integer w : g.adj(s)) {
+    	            if (!onPath.contains(w)){ 
+    	            	
+    	            	/*
+    	                for(Integer temp: path ){
+    	                	System.out.println(temp);
+    	            	  	
+    	            	}*/
+    	            	
+    	                findAllPath(g, w, d);
+    	            }
+    	        }
+    	    }
+    	    // done exploring from v, so remove from path
+    	    path.pop();
+    	    onPath.delete(s);
+    }
+
+    
 
     // Returns the set of all valid words in the given Boggle board, as an Iterable.
     public Iterable<String> getAllValidWords(BoggleBoard board) {
@@ -41,23 +76,17 @@ public class BoggleSolver
     	      	hm.put(value, dice);
     		}
     	
-    	//connect the edges
-     	//insides
-    
-    	
-        //sides
-    	
+    	//connect the edges       
         for(int b=0;b<columns-1;b++){
-        	
     		g.addEdge(b, b+1 );
             g.addEdge((rows-1)*rows+b, (rows-1)*rows+b+1 );
         }
-      
+        
     	for(int a=0;a<rows-1;a++){
     		g.addEdge(a*rows, (a+1)*rows);
     	    g.addEdge(a*rows+columns-1, (a+1)*rows+columns-1);
     	}
-    		
+       
     	//
     	for(int b=1;b<columns-1;b++){
     		g.addEdge(0*rows+b, 1*rows+b);
@@ -89,40 +118,29 @@ public class BoggleSolver
     			g.addEdge(i*rows+j, (i)*rows+j-1);
     			g.addEdge(i*rows+j, (i)*rows+j+1);
     			g.addEdge(i*rows+j, (i+1)*rows+j-1);
-    			g.addEdge(i*rows+j, (i+1)*rows+j-1);
-    			g.addEdge(i*rows+j, (i+1)*rows+j-1);
+    			g.addEdge(i*rows+j, (i+1)*rows+j);
+    			g.addEdge(i*rows+j, (i+1)*rows+j+1);
     		}
     	
-    	StdOut.println(g.toString());
+    	//StdOut.println(g.toString());
     	
        for(int i=0;i<g.V();i++){
-          dfp=new DepthFirstPaths(g,i);
-          //StdOut.println("kkkkkkkkkkkkkkkkkkkk");
           for(int j=0;j<g.V();j++){
         	  if(j==i) continue;
-              if(dfp.hasPathTo(j)==true){
-            	  path = new Stack<Integer>();
-            	  path=(Stack<Integer>) dfp.pathTo(j);
-            	  str=new String();
-            	  while(path.isEmpty()==false){
-            		  int v=path.pop();
-            		  char ch=hm.get(v);
-            		  
-            		  str=str+ch;
-            		  //StdOut.println(hm.containsKey(v));
-                  }
-            	  //StdOut.println(str);
-            	  words.enqueue(str);
-              }
+        	  //TODO: find all path to J!!!!!!!!
+        	  findAllPath(g,j,i);
+              
           }
+          StdOut.println();
        }
-    	return words;
+    	return null;
     }
     
     // Returns the score of the given word if it is in the dictionary, zero otherwise.
     // (You can assume the word contains only the uppercase letters A through Z.)
     public int scoreOf(String word){
     	if(st.contains(word)){
+    		StdOut.println(word);
     		if(word.length()>0&& word.length()<=2){
     			return 0;
     		}
@@ -155,7 +173,7 @@ public class BoggleSolver
        
         solver.getAllValidWords(board);
         //solver.printHash();
-       for (String word : solver.getAllValidWords(board))
+       //for (String word : solver.getAllValidWords(board))
         	//StdOut.println(word);
        
        
@@ -165,12 +183,12 @@ public class BoggleSolver
        int score = 0;
        for (String word : solver.getAllValidWords(board))
         {
-           StdOut.println(word);
+           //StdOut.println(word);
            score += solver.scoreOf(word);
         }
         StdOut.println("Score = " + score);
-         
-        */
+         */
+        
         return;
     }
     
