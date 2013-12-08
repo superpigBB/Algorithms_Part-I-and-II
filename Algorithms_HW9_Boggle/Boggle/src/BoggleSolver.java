@@ -53,7 +53,7 @@ public class BoggleSolver
     	            if (!onPath.contains(w)){ 
     	            	char wc=hm.get(w);
     	            	Stack<Integer> reverse=new Stack<Integer>();
-    	      		    //TODO :optimization
+    	      		    //optimization
     	    			  for(Integer temp:path)
     	    			    reverse.push(temp);
     	    			  
@@ -66,12 +66,14 @@ public class BoggleSolver
     	                	char c=hm.get(temp);
       	          		    str=str+c;
     	            	  }
-    	                  //TODO:How to prefix
+    	                  // prefix
     	                  str=str+wc;
     	                  //System.out.println(str);
-    	                  if(st.prefixMatch(str)!=null)  {
+    	                  Queue<String> q=(Queue<String>) st.prefixMatch(str);
+    	                  
+    	                  if(!q.isEmpty())  {
     	                	  //System.out.println("---------------------------");
-    	                	  System.out.println(str);
+    	                	  //System.out.println(str);
     	                	  //System.out.println("kkkkkk");
     	                   findAllPath(g, w, d);
     	                  }
