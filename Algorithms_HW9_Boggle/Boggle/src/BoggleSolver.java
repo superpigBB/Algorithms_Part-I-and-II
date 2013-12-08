@@ -2,19 +2,18 @@ import java.util.HashMap;
 
 public class BoggleSolver
 {
-	private TrieST<Integer> st;
+	private TST<Integer> st;
 	private HashMap<Integer, Character> hm;
 	private Graph g;
 	private Stack<Integer> path  = new Stack<Integer>();   
     private SET<Integer> onPath  = new SET<Integer>(); 
-	private Stack<Integer> finalpath= new Stack<Integer>();
-	private Queue<Stack<Integer>> reque= new Queue<Stack<Integer>>();
-	private Queue<Queue<String>> reque1= new Queue<Queue<String>>();
 	
+	private Queue<Stack<Integer>> reque= new Queue<Stack<Integer>>();
+
     // Initializes the data structure using the given array of strings as the dictionary.
     // (You can assume each word in the dictionary contains only the uppercase letters A through Z.)
     public BoggleSolver(String[] dictionary){
-    	st = new TrieST<Integer>();
+    	st = new TST<Integer>();
     	for(int i=0;i<dictionary.length;i++){
     		st.put(dictionary[i], i);
     	}
@@ -29,18 +28,22 @@ public class BoggleSolver
     
      
     private void findAllPath(Graph g, Integer s, Integer d){
+    	   
     	   // add node v to current path from s
     	   path.push(s);
     	   onPath.add(s);
-
+    	   
+    	   
     	   // found path from s to t - currently prints in reverse order because of stack
     	   if (s.equals(d)){	
     		  Stack<Integer> reverse=new Stack<Integer>();
     		  
     			  for(Integer temp:path)
     			    reverse.push(temp);
-    		  
+    			  
+    		   //System.out.println("**********************");
     	       //System.out.println(reverse);
+    	      // System.out.println("**********************");
     	       reque.enqueue(reverse);
     	     
     	    }
@@ -48,15 +51,31 @@ public class BoggleSolver
     	    else {
     	        for (Integer w : g.adj(s)) {
     	            if (!onPath.contains(w)){ 
-    	           
-    	            	
-    	            	/*
-    	                for(Integer temp: path ){
-    	                	System.out.println(temp);
-    	            	  	
-    	            	}*/
-    	            	
-    	                findAllPath(g, w, d);
+    	            	char wc=hm.get(w);
+    	            	Stack<Integer> reverse=new Stack<Integer>();
+    	      		    //TODO :optimization
+    	    			  for(Integer temp:path)
+    	    			    reverse.push(temp);
+    	    			  
+    	    			  //System.out.println(reverse);
+    	    			  //reverse.equals(w);
+    	    			  String str=new String();
+    	    			  
+    	                  for(Integer temp: reverse){
+    	                	//System.out.println(temp);
+    	                	char c=hm.get(temp);
+      	          		    str=str+c;
+    	            	  }
+    	                  //TODO:How to prefix
+    	                  str=str+wc;
+    	                  //System.out.println(str);
+    	                  if(st.prefixMatch(str)!=null)  {
+    	                	  //System.out.println("---------------------------");
+    	                	  System.out.println(str);
+    	                	  //System.out.println("kkkkkk");
+    	                   findAllPath(g, w, d);
+    	                  }
+    	                  
     	            }
     	        }
     	    }
@@ -65,13 +84,11 @@ public class BoggleSolver
     	    onPath.delete(s);
     }
 
-    
-
     // Returns the set of all valid words in the given Boggle board, as an Iterable.
     public Iterable<String> getAllValidWords(BoggleBoard board) {
     	int rows=board.rows();
     	int columns=board.cols();
-    	Queue<String> words=new Queue<String>();
+    	SET<String> words=new SET<String>();
     	g=new Graph(rows*columns);
     	hm=new HashMap<Integer, Character> ();
     	for(int i=0;i<rows;i++)
@@ -79,7 +96,6 @@ public class BoggleSolver
     			char dice=board.getLetter(i, j);
     			int value=i*rows+j;
     			//StdOut.println(value+" "+dice);
-    			
     	      	hm.put(value, dice);
     		}
     	
@@ -133,22 +149,21 @@ public class BoggleSolver
     	
        for(int i=0;i<g.V();i++){
           for(int j=0;j<g.V();j++){
-        	  if(j==i) continue;
-        	  //TODO: find all path to J!!!!!!!!
+        	  if(i==j) continue;
         	  findAllPath(g,i,j);
         	  
         	  while(reque.isEmpty()==false){
                 String str=new String();
         	    for( Integer t:reque.dequeue()){
         		  char c=hm.get(t);
-        		  str=str+c;
+        		  if(c=='Q') str=str+c+'U';
+        		  else str=str+c;
         	    }
-        	    words.enqueue(str);
         	    
+        	    if(!words.contains(str))
+        	       words.add(str);
         	    
         	  }
-        	  
-        	  
           }
           //StdOut.println();
        }
@@ -159,7 +174,7 @@ public class BoggleSolver
     // (You can assume the word contains only the uppercase letters A through Z.)
     public int scoreOf(String word){
     	if(st.contains(word)){
-    		StdOut.println(word);
+    		//StdOut.println(word);
     		if(word.length()>0&& word.length()<=2){
     			return 0;
     		}
@@ -189,20 +204,17 @@ public class BoggleSolver
         BoggleSolver solver = new BoggleSolver(dictionary);
         BoggleBoard board = new BoggleBoard(args[1]);
         
-       
         //solver.getAllValidWords(board);
         //solver.printHash();
        //for (String word : solver.getAllValidWords(board))
         	//StdOut.println(word);
-       
-       
-       
-       
-        
+
        int score = 0;
        for (String word : solver.getAllValidWords(board))
         {
-           //StdOut.println(word);
+    	   //System.out.println("**********************");
+           StdOut.println(word);
+           //System.out.println("**********************");
            score += solver.scoreOf(word);
         }
         StdOut.println("Score = " + score);
