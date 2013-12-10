@@ -17,37 +17,23 @@ public class BoggleSolver
     	for(int i=0;i<dictionary.length;i++){
     		st.put(dictionary[i], i);
     	}
-    	//for(int i=0;i<dictionary.length;i++)
-        //{
-        //	StdOut.println("Score = " + st.get(dictionary[i]));
-        //}
-        //for (String key : st.keys()) {
-        //  StdOut.println(key + " " + st.get(key));
-        //}
     }
     
-     
     private void findAllPath(Graph g, Integer s, Integer d){
     	   
     	   // add node v to current path from s
     	   path.push(s);
     	   onPath.add(s);
     	   
-    	   
     	   // found path from s to t - currently prints in reverse order because of stack
     	   if (s.equals(d)){	
     		  Stack<Integer> reverse=new Stack<Integer>();
-    		  
-    			  for(Integer temp:path)
-    			    reverse.push(temp);
-    			  
-    		   //System.out.println("**********************");
-    	       //System.out.println(reverse);
-    	      // System.out.println("**********************");
+    	      for(Integer temp:path)
+    			 reverse.push(temp);
+    	
     	       reque.enqueue(reverse);
-    	     
     	    }
-   	        // consider all neighbors that would continue path with repeating a node
+    	    // consider all neighbors that would continue path with repeating a node
     	    else {
     	        for (Integer w : g.adj(s)) {
     	            if (!onPath.contains(w)){ 
@@ -64,8 +50,9 @@ public class BoggleSolver
     	                  for(Integer temp: reverse){
     	                	//System.out.println(temp);
     	                	char c=hm.get(temp);
-      	          		    str=str+c;
-    	            	  }
+    	                	if(c=='Q') str=str+c+'U';
+    	          		    else str=str+c;
+      	          		  }
     	                  // prefix
     	                  str=str+wc;
     	                  //System.out.println(str);
@@ -152,6 +139,7 @@ public class BoggleSolver
        for(int i=0;i<g.V();i++){
           for(int j=0;j<g.V();j++){
         	  if(i==j) continue;
+        	  
         	  findAllPath(g,i,j);
         	  
         	  while(reque.isEmpty()==false){
@@ -162,9 +150,10 @@ public class BoggleSolver
         		  else str=str+c;
         	    }
         	    
+        	    if(st.contains(str)&&str.length()>2){
         	    if(!words.contains(str))
         	       words.add(str);
-        	    
+        	    }
         	  }
           }
           //StdOut.println();
@@ -175,7 +164,7 @@ public class BoggleSolver
     // Returns the score of the given word if it is in the dictionary, zero otherwise.
     // (You can assume the word contains only the uppercase letters A through Z.)
     public int scoreOf(String word){
-    	if(st.contains(word)){
+    	//if(st.contains(word)){
     		//StdOut.println(word);
     		if(word.length()>0&& word.length()<=2){
     			return 0;
@@ -195,8 +184,8 @@ public class BoggleSolver
     		else{
     			return 11;
     		}
-    	}
-    	return 0;
+    	//}
+    	//return 0;
     }
     
     public static void main(String[] args)
