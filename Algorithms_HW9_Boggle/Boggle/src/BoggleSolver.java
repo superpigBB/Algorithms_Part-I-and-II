@@ -68,23 +68,7 @@ public class BoggleSolver
     	                   }
     	                //System.out.println(str);
     	            	
-    	            	  /*
-    	                  if(path.size()<=max_dict_len){
-    	            	   StringBuilder str=new StringBuilder();
-    	            	   
-    	            	   for(Integer temp:path){
-    	            		  
-    	            		   char c=hm.get(temp);
-    	            		   //StdOut.println(c);
-    	            	       if(c=='Q') str.insert(0, c);
-   	          		           else str.insert(0, c);
-    	            	      
-    	            	      
-    	            	   }
-    	            	 StdOut.println(str);
-    	            	*/
-    	            	
-    	                  //TODO: prefix
+    	                  //TODO:How to optimization prefix
     	                  //Queue<String> q=(Queue<String>) st.prefixMatch(str);
     	                  
     	                  //if(!q.isEmpty())  {
@@ -137,13 +121,7 @@ public class BoggleSolver
     			g.addEdge(i*rows+j, (i+1)*rows+j+1);
     			g.addEdge((i+1)*rows+j, (i)*rows+j+1);
     		}
-    	/*
-    	for(int i=1;i<rows;i++)
-    		for(int j=0;j<columns-1;j++){
-    			g.addEdge(i*rows+j, (i-1)*rows+j+1);
-    		}*/
-    	//StdOut.println(g.toString());
-    	
+    	   	
        for(int i=0;i<g.V();i++){
           for(int j=0;j<g.V();j++){
         	  if(i==j) continue;
@@ -173,8 +151,6 @@ public class BoggleSolver
     // Returns the score of the given word if it is in the dictionary, zero otherwise.
     // (You can assume the word contains only the uppercase letters A through Z.)
     public int scoreOf(String word){
-    	//if(st.contains(word)){
-    		//StdOut.println(word);
     		if(word.length()>0&& word.length()<=2){
     			return 0;
     		}
@@ -193,8 +169,6 @@ public class BoggleSolver
     		else{
     			return 11;
     		}
-    	//}
-    	//return 0;
     }
     
     public static void main(String[] args)
