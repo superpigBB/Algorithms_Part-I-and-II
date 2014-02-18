@@ -1,16 +1,18 @@
 public class Percolation {
 	private WeightedQuickUnionUF WQUF=null;
-	private boolean[][] OpenArray=null;
+	private boolean[] OpenArray=null;
 	private int rowlength;
     
 	public Percolation(int N){     //create N by N grid, with all sites blocked
-		WQUF=new WeightedQuickUnionUF(N*N);
-		OpenArray=new boolean[N][N];
+		WQUF=new WeightedQuickUnionUF(N*N+2);
+		OpenArray=new boolean[N*N+2];
 		rowlength=N;
 	   
-		for(int i=0; i<N; i++)
-	    	for(int j=0; j<N; j++)
-	    		OpenArray[i][j]=false;
+		for(int i=0; i<N*N+2; i++)
+	    	OpenArray[i]=false;
+		
+		OpenArray[N*N]=true;
+		OpenArray[N*N+1]=true;
    }
 	
 	public void open(int i, int j){
@@ -19,27 +21,36 @@ public class Percolation {
 			throw new java.lang.IndexOutOfBoundsException();        
 		} 
 		
+		if(isOpen(i,j)) return;
+		
 		int RowIndex=i-1; //-1 make the site count from 1 to N
 		int ColumnIndex=j-1;
 		
 		
-		OpenArray[RowIndex][ColumnIndex]=true;
+		OpenArray[RowIndex*rowlength+ColumnIndex]=true;
 		
-		if((RowIndex>0)&&(OpenArray[RowIndex-1][ColumnIndex]==true)){ // top is open
-			WQUF.union(rowlength*(RowIndex)+ColumnIndex, rowlength*(RowIndex-1)+ColumnIndex);
-		}	
-		
-        if((ColumnIndex>0)&&(OpenArray[RowIndex][ColumnIndex-1]==true)){ // left is open
-    	   WQUF.union(rowlength*(RowIndex)+ColumnIndex, rowlength*(RowIndex)+ColumnIndex-1);
-		}
-        
-        if((ColumnIndex<rowlength-1)&&(OpenArray[RowIndex][ColumnIndex+1]==true)){ // right is open
-    	   WQUF.union(rowlength*(RowIndex)+ColumnIndex, rowlength*(RowIndex)+ColumnIndex+1);
-        }
-        
-        if((RowIndex<rowlength-1)&&(OpenArray[RowIndex+1][ColumnIndex]==true)){ // down is open
-    	   WQUF.union(rowlength*(RowIndex)+ ColumnIndex, rowlength*(RowIndex+1)+ColumnIndex);
-        }
+		//if not top row
+		if(i!=1 && isOpen(i-1,j)){
+			WQUF.union(((RowIndex-1)*rowlength+ColumnIndex),RowIndex*rowlength+ColumnIndex); 
+	       }else if(i==1){
+	        //connect to virtual top cell
+	    	   WQUF.union(RowIndex*rowlength+ColumnIndex, rowlength*rowlength);
+	       }
+	       //if not bottom row
+	       if(i!=rowlength && isOpen(i+1,j)){       
+	    	   WQUF.union(((RowIndex+1)*rowlength+ColumnIndex),RowIndex*rowlength+ColumnIndex); 
+	       }else if (i==rowlength){
+	          //connect to virtual bottom cell
+	    	   WQUF.union(RowIndex*rowlength+ColumnIndex, rowlength*rowlength+1);
+	       }
+	       //if not left border
+	       if(j!=1 && isOpen(i,j-1)){
+	    	   WQUF.union(((RowIndex)*rowlength+ColumnIndex-1),RowIndex*rowlength+ColumnIndex); 
+	       }
+	       //if not right border
+	        if(j!=rowlength && isOpen(i,j+1)){
+	        	WQUF.union(((RowIndex)*rowlength+ColumnIndex+1),RowIndex*rowlength+ColumnIndex); 
+	       }
 	
        return;	
 	}
@@ -54,7 +65,7 @@ public class Percolation {
 		int RowIndex=i-1;
 		int ColumnIndex=j-1;
 		
-		return OpenArray[RowIndex][ColumnIndex];
+		return OpenArray[RowIndex*rowlength+ColumnIndex];
 	}
 
 	public boolean isFull(int i, int j){
@@ -76,11 +87,8 @@ public class Percolation {
 	
 	public boolean percolates(){
 		
-		for(int i=0; i<rowlength; i++)
-			for(int j=0; j<rowlength; j++){
-			   if(isOpen(1, i + 1) && isOpen(rowlength, j + 1) && WQUF.connected(rowlength*(rowlength-1)+j, i)==true)
-				   return true;				
-			}
+		if(WQUF.connected(rowlength*rowlength, rowlength*rowlength+1)) 
+			return true;
 				
 		return false;
 	}
