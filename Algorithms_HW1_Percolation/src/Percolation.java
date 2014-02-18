@@ -68,7 +68,7 @@ public class Percolation {
 		int ColumnIndex=j-1;
 		
 		for(int n=0; n<rowlength;n++){
-			if(isOpen(i, j)&&WQUF.connected((RowIndex)*rowlength+ColumnIndex, n)==true)
+			if(isOpen(i, j)&& WQUF.connected((RowIndex)*rowlength+ColumnIndex, n)==true)
 				return true;
 		}
 		return false;
@@ -78,7 +78,7 @@ public class Percolation {
 		
 		for(int i=0; i<rowlength; i++)
 			for(int j=0; j<rowlength; j++){
-			   if(isOpen(1, i + 1) && isOpen(rowlength, j + 1)&&WQUF.connected(rowlength*(rowlength-1)+j, i)==true)
+			   if(isOpen(1, i + 1) && isOpen(rowlength, j + 1) && WQUF.connected(rowlength*(rowlength-1)+j, i)==true)
 				   return true;				
 			}
 				

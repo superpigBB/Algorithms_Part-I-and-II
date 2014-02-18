@@ -7,7 +7,6 @@ public class PercolationStats {
 	private int time=0;
 	private Percolation P=null;
 	private Random rand = new Random();
-	private boolean[][] record=null;
 	public PercolationStats(int N, int T){
 		if (N<=0||T<=0) 
 		{     
@@ -16,27 +15,22 @@ public class PercolationStats {
 
 		x=new double[T];
 		
+		
 		for(int a=0;a<T;a++)
-		  x[a]=0;
+		  x[a]=0.0;
 		
 		time=T;
 		int r=1;
 		int c=1;
 		for(int i=0; i<T; i++){
 			P=new Percolation(N);
-			record=new boolean[N][N];
-			
-			for(int x=0;x<N;x++)
-				for(int y=0;y<N;y++)
-					record[x][y]=false;
-			
-			
-			while(P.percolates()==false){
+			//System.out.println("jjjjjjjjjjjjjjjjjj");
+			while(!P.percolates()){
 				r = rand.nextInt(N) + 1;				
 				c= rand.nextInt(N) + 1;
-				
-				if(record[r-1][c-1]==false){
-					record[r-1][c-1]=true;
+				//System.out.println("aaaaa");
+				if(!P.isOpen(r, c)){
+					//System.out.println("dfg");
 					P.open(r, c);
 					x[i]++;
 				}
@@ -85,13 +79,12 @@ public class PercolationStats {
 	public static void main(String[] args) {
 		int N=Integer.parseInt(args[0]);
 		int T=Integer.parseInt(args[1]);
-		double mean=0;
-		double dev=0;
-		double Lo=0;
-		double Hi=0;
+		double mean=0.0;
+		double dev=0.0;
+		double Lo=0.0;
+		double Hi=0.0;
 		 
-		PercolationStats P=new  PercolationStats(N,T);
-		
+		PercolationStats P=new PercolationStats(N,T);
 		mean=P.mean();
 		dev=P.stddev();
 		Lo=P.confidenceLo();
