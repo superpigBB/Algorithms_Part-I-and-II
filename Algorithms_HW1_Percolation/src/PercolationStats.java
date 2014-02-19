@@ -3,8 +3,6 @@ import java.util.*;
 public class PercolationStats {
 	private double mean=0;
 	private double dev=0;
-	private double confidenceLo=0;
-	private double confidenceHi=0;
 	private double[] x=null;
 	private int time=0;
 	private Percolation P=null;
@@ -39,45 +37,43 @@ public class PercolationStats {
 			}
 			x[i]=x[i]/(N*N);
 			
-		}
-		
-		//for mean()
-		double sum=0;
+		}		
+	}
+	
+	public double mean(){
+	    double sum=0;
 	    for(int i=0;i<time;i++){
 			sum=sum+x[i];
 		}
 		mean=sum/time;
-	
-		//for stddev()
-		double sum1=0;
-		double dev2=0;
-		for(int i=0;i<time;i++){
-			sum1=(x[i]-mean)*(x[i]-mean);
-		}
-		dev2=sum1/(time-1);
-		dev=Math.sqrt(dev2);
 		
-		//for
-        double time_s=Math.sqrt(time);
-		confidenceLo= mean()-(1.96*dev)/time_s;
-		confidenceHi=  mean()+(1.96*dev)/time_s;
-		
-	}
-	
-	public double mean(){	
 		return mean;
 	}
 	
 	public double stddev(){
+		double sum1=0;
+		double dev2=0;
+		for(int i=0;i<time;i++){
+			sum1=(x[i]-mean())*(x[i]-mean());
+		}
+		dev2=sum1/(time-1);
+		dev=Math.sqrt(dev2);
+		
 		return dev;
 	}
 	
 	public double confidenceLo(){
-		return confidenceLo;
+		double time_s=Math.sqrt(time);
+		
+		double result= mean()-(1.96*stddev())/time_s;
+		return result;
 	}
 	
 	public double confidenceHi(){
-       return confidenceHi;
+        double time_s=Math.sqrt(time);
+		
+		double result=  mean()+(1.96*stddev())/time_s;
+		return result;
 	}
 	
 	public static void main(String[] args) {

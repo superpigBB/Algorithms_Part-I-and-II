@@ -8,7 +8,7 @@ public class Percolation {
 		OpenArray=new boolean[N*N+2];
 		rowlength=N;
 	   
-		for(int i=0; i<N*N+2; i++)
+		for(int i=0; i<N*N; i++)
 	    	OpenArray[i]=false;
 		
 		OpenArray[N*N]=true;
@@ -28,27 +28,41 @@ public class Percolation {
 		
 		OpenArray[RowIndex*rowlength+ColumnIndex]=true;
 		
-		// top row
-		   if(i!=1 && isOpen(i-1,j)){
-			   WQUF.union(((RowIndex-1)*rowlength+ColumnIndex),RowIndex*rowlength+ColumnIndex); 
-	       }else if(i==1){
-	        //virtual top cell
-	    	   WQUF.union(RowIndex*rowlength+ColumnIndex, rowlength*rowlength);
-	       }
+		 //virtual top cell
+		
+		  if(i==1){
+	    	  if(!WQUF.connected(RowIndex*rowlength+ColumnIndex, rowlength*rowlength))
+		      WQUF.union(RowIndex*rowlength+ColumnIndex, rowlength*rowlength);
+		  }
+		
+		   //top row
+		  if(i!=1 && isOpen(i-1,j)){
+			  if(!WQUF.connected(((RowIndex-1)*rowlength+ColumnIndex),RowIndex*rowlength+ColumnIndex))
+			  WQUF.union(((RowIndex-1)*rowlength+ColumnIndex),RowIndex*rowlength+ColumnIndex); 
+	      }
+		   
+		  if (i==rowlength){
+	          //virtual bottom cell
+	    	  if(!WQUF.connected(RowIndex*rowlength+ColumnIndex, rowlength*rowlength+1))
+	    	  WQUF.union(RowIndex*rowlength+ColumnIndex, rowlength*rowlength+1);
+	      }
+		  
 	       // bottom row
 	       if(i!=rowlength && isOpen(i+1,j)){       
+	    	   if(!WQUF.connected(((RowIndex+1)*rowlength+ColumnIndex),RowIndex*rowlength+ColumnIndex)) 
 	    	   WQUF.union(((RowIndex+1)*rowlength+ColumnIndex),RowIndex*rowlength+ColumnIndex); 
-	       }else if (i==rowlength){
-	          //virtual bottom cell
-	    	   WQUF.union(RowIndex*rowlength+ColumnIndex, rowlength*rowlength+1);
 	       }
+	       
 	       //left border
 	       if(j!=1 && isOpen(i,j-1)){
+	    	   if(!WQUF.connected(((RowIndex)*rowlength+ColumnIndex-1),RowIndex*rowlength+ColumnIndex)) 
 	    	   WQUF.union(((RowIndex)*rowlength+ColumnIndex-1),RowIndex*rowlength+ColumnIndex); 
 	       }
+	       
 	       //right border
 	        if(j!=rowlength && isOpen(i,j+1)){
-	        	WQUF.union(((RowIndex)*rowlength+ColumnIndex+1),RowIndex*rowlength+ColumnIndex); 
+	           if(!WQUF.connected(((RowIndex)*rowlength+ColumnIndex+1),RowIndex*rowlength+ColumnIndex))
+	           WQUF.union(((RowIndex)*rowlength+ColumnIndex+1),RowIndex*rowlength+ColumnIndex); 
 	       }
 	
 	}
