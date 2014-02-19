@@ -88,6 +88,10 @@ public class Percolation {
 		int RowIndex=i-1;
 		int ColumnIndex=j-1;
 		
+		if(!percolates())
+		return WQUF.connected(rowlength*rowlength,RowIndex*rowlength+ColumnIndex);
+		else
+			//TODO; handle backwash case
 		return WQUF.connected(rowlength*rowlength,RowIndex*rowlength+ColumnIndex);
 	}
 	
