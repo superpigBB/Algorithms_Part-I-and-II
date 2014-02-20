@@ -1,8 +1,6 @@
 import java.util.*;
 
 public class PercolationStats {
-	private double mean=0;
-	private double dev=0;
 	private double[] x=null;
 	private int time=0;
 	private Percolation P=null;
@@ -24,24 +22,22 @@ public class PercolationStats {
 		int c=1;
 		for(int i=0; i<T; i++){
 			P=new Percolation(N);
-			//System.out.println("jjjjjjjjjjjjjjjjjj");
 			while(!P.percolates()){
 				r = rand.nextInt(N) + 1;				
 				c= rand.nextInt(N) + 1;
-				//System.out.println("aaaaa");
 				if(!P.isOpen(r, c)){
-					//System.out.println("dfg");
 					P.open(r, c);
 					x[i]++;
 				}
 			}
 			x[i]=x[i]/(N*N);
-			
+			P=null;
 		}		
 	}
 	
 	public double mean(){
-	    double sum=0;
+		double mean=0.0;
+	    double sum=0.0;
 	    for(int i=0;i<time;i++){
 			sum=sum+x[i];
 		}
@@ -51,10 +47,11 @@ public class PercolationStats {
 	}
 	
 	public double stddev(){
-		double sum1=0;
-		double dev2=0;
+		double sum1=0.0;
+		double dev2=0.0;
+		double dev= 0.0;
 		for(int i=0;i<time;i++){
-			sum1=(x[i]-mean())*(x[i]-mean());
+			sum1=sum1+Math.pow((x[i]-mean()),2);
 		}
 		dev2=sum1/(time-1);
 		dev=Math.sqrt(dev2);
@@ -78,20 +75,11 @@ public class PercolationStats {
 	
 	public static void main(String[] args) {
 		int N=Integer.parseInt(args[0]);
-		int T=Integer.parseInt(args[1]);
-		double mean=0.0;
-		double dev=0.0;
-		double Lo=0.0;
-		double Hi=0.0;
-		 
-		PercolationStats P=new PercolationStats(N,T);
-		mean=P.mean();
-		dev=P.stddev();
-		Lo=P.confidenceLo();
-		Hi=P.confidenceHi();		
-		System.out.println("mean                    = "+mean);
-		System.out.println("stddev                  = "+dev);
-		System.out.println("95% confidence interval = "+Lo +"," +Hi);
+		int T=Integer.parseInt(args[1]);	 
+		PercolationStats P=new PercolationStats(N,T);		
+		System.out.println("mean                    = "+P.mean());
+		System.out.println("stddev                  = "+P.stddev());
+		System.out.println("95% confidence interval = "+ P.confidenceLo() +"," + P.confidenceHi());
 		
       return;
 	}
