@@ -1,0 +1,10 @@
+4
+aa
+bb
+dd
+rr
+gg
+uu
+jj
+ll
+ff
